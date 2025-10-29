@@ -1,0 +1,36 @@
+.keyboard {
+		display: grid;
+		grid-template-columns: repeat(7, minmax(70px, 1fr));
+		gap: 10px;
+		width: min(90vw, 900px);
+		padding: 20px;
+}
+
+.key {
+		border: none;
+		border-radius: 10px;
+		background: #ffffff;
+		color: #111827;
+		height: min(40vh, 280px);
+		font-size: 22px;
+		font-weight: 700;
+		letter-spacing: 1px;
+		box-shadow: 0 10px 20px rgba(0,0,0,0.25), inset 0 -6px 0 rgba(0,0,0,0.15);
+		cursor: pointer;
+		transition: transform 0.05s ease, box-shadow 0.1s ease, background 0.2s ease;
+		user-select: none;
+}
+
+.key:focus { outline: 3px solid #60a5fa; outline-offset: 2px; }
+
+.key.active {
+		transform: translateY(4px);
+		box-shadow: 0 5px 12px rgba(0,0,0,0.35), inset 0 -2px 0 rgba(0,0,0,0.25);
+		background: #f1f5f9;
+}
+
+@media (max-width: 640px) {
+		.key { font-size: 18px; height: 160px; }
+}
+
+
