@@ -17,13 +17,13 @@ const fragment = document.createDocumentFragment();
 
 function createElement(tag, classes = '', content = '', parent = fragment) {
   const el = document.createElement(tag);
-  if (classes.length) el.classList = classes;
+  el.className = classes;
   if (content) el.innerHTML = content;
   parent.appendChild(el);
   return el;
 }
 
-const main = createElement('main', 'main', '', fragment);
+const main = createElement('main', 'container main', '', fragment);
 
 const keyboard = createElement('div', 'keyboard', '', main);
 
@@ -68,7 +68,8 @@ for (let key in notes) {
       input.disabled = true;
     }
   });
-  let audio = new Audio(notes[key].sound);;
+  let audio = new Audio(notes[key].sound);
+  ;
   // button.addEventListener('mousedown', (e) => {
   //   e.repeat = false;
   //   audio.play();
@@ -81,13 +82,38 @@ for (let key in notes) {
   //   audio.pause();
   // });
 
-
   const editButton = createElement('button', 'btn btn-light', 'edit', keyWrapper);
   editButton.addEventListener('click', (event) => {
     input.focus();
     input.disabled = false;
   });
 }
+
+const control = createElement('div', 'input-group control', '', main);
+const playInput = createElement('input', 'control__input', '', control);
+const submitButton = createElement('button', 'btn btn-outline-success control__submit', 'submit', control);
+playInput.id = 'playInput';
+playInput.type = 'text';
+playInput.setAttribute('maxlength', '14');
+let song = '';
+playInput.addEventListener('input', (e) => {
+  const arr = document.querySelectorAll('.key');
+  arr.forEach(item => {
+    return item.disabled = true;
+  });
+  playInput.focus();
+  const value = e.data.toUpperCase();
+  console.log(value, !/^[A-Z]$/.test(value), !keysArr.includes(value));
+  if (!/^[A-Z]$/.test(value) || !keysArr.includes(value)) {
+    console.log('не подходит', song);
+    e.target.value = song;
+    return;
+  }
+  if (song.length < 14) {
+    song += e.data;
+  }
+
+});
 
 document.body.appendChild(fragment);
 
@@ -109,7 +135,7 @@ document.addEventListener('keydown', (e) => {
 document.addEventListener('keyup', (e) => {
   const activeKey = document.querySelector('.key_active');
   if (activeKey) {
-    const child = activeKey.firstChild
+    const child = activeKey.firstChild;
     if (child.id === e.code.slice(3)) {
       keyLocked = false;
       activeKey.classList.remove('key_active');

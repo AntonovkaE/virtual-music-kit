@@ -7,7 +7,7 @@
 }
 
 .key {
-		border: none;
+		border: 1px solid grey;
 		border-radius: 10px;
 		background: #ffffff;
 		color: #111827;
@@ -15,7 +15,7 @@
 		font-size: 22px;
 		font-weight: 700;
 		letter-spacing: 1px;
-		box-shadow: 0 10px 20px rgba(0,0,0,0.25), inset 0 -6px 0 rgba(0,0,0,0.15);
+		/*box-shadow: 0 10px 20px rgba(0,0,0,0.25), inset 0 -6px 0 rgba(0,0,0,0.15);*/
 		cursor: pointer;
 		transition: transform 0.05s ease, box-shadow 0.1s ease, background 0.2s ease;
 		user-select: none;
@@ -48,8 +48,14 @@
 
 .key_active, .key:active {
 		transform: translateY(4px);
-		box-shadow: 0 5px 12px rgba(0,0,0,0.35), inset 0 -2px 0 rgba(0,0,0,0.25);
+		/*box-shadow: 0 5px 12px rgba(0,0,0,0.35), inset 0 -2px 0 rgba(0,0,0,0.25);*/
 		background: #60a5fa;
+}
+
+.key_active:disabled, .key:disabled {
+		background: #888888;
+		transform: translateY(0);
+		/*box-shadow: 0 10px 20px rgba(0,0,0,0.25), inset 0 -6px 0 rgba(0,0,0,0.15);*/
 }
 .key:focus-visible {
 		border: none;
