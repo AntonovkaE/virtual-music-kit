@@ -9,11 +9,27 @@ const notes = {
 };
 let keyLocked = false;
 const audioCache = {};
+const activeSounds = {};
 function  playSound(note) {
-  console.log(audioCache)
+  if (activeSounds[note]) return;
   const sound = audioCache[note].cloneNode();
   sound.currentTime = 0;
+  sound.loop = true;
+  activeSounds[note] = sound;
   sound.play().catch(error => console.log(error))
+  console.log('play')
+
+}
+
+function stopSound(note) {
+  const sound = activeSounds[note];
+  if (sound) {
+    setTimeout(() => {
+      sound.pause();
+      sound.currentTime = 0;
+      delete activeSounds[note];
+    }, 1000);
+  }
 }
 
 function buttonClicked (input) {
@@ -103,16 +119,11 @@ for (let key in notes) {
   // let audio = new Audio(notes[key].sound);
   button.addEventListener('mousedown', (e) => {
     e.repeat = false;
-    console.log('click',key,  e)
     playSound(key)
   });
 
   button.addEventListener('mouseup', () => {
-    if (audioCache[key]) {
-      audioCache[key].pause();
-      audioCache[key].currentTime = 0; // сбросить на начало
-      delete audioCache[key];
-    }
+    stopSound(key);
   });
 
   const editButton = createElement('button', 'btn btn-light', 'edit', keyWrapper);
@@ -198,12 +209,13 @@ document.addEventListener('keydown', (e) => {
 
 document.addEventListener('keyup', (e) => {
   const activeKey = document.querySelector('.key_active');
+  const button = document.getElementById(e.code.slice(3)).parentNode;
   if (activeKey) {
     const child = activeKey.firstChild;
     if (child.id === e.code.slice(3)) {
       keyLocked = false;
       activeKey.classList.remove('key_active');
-
+      stopSound(button.id)
     }
   }
 });
