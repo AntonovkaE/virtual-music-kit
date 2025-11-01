@@ -54,7 +54,6 @@ function playNotePromise(note, delay = 300) {
   });
 }
 
-
 const keysArr = [];
 for (let note in notes) {
   keysArr.push(notes[note].key);
@@ -220,5 +219,5 @@ document.addEventListener('keyup', (e) => {
   }
 });
 
-//The visual element switches to its active state, which lasts as long as the user keeps pressing the key or mouse.
+
 //Only one key can be processed at a time. If the user attempts to press multiple keys simultaneously, the application should process only the first key press detected to prevent multiple inputs from being registered at the same moment.
