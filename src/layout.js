@@ -8,6 +8,36 @@ const notes = {
   si: { key: 'J', sound: './assets/si.mp3', label: 'Si' },
 };
 let keyLocked = false;
+const audioCache = {};
+function  playSound(note) {
+  console.log(audioCache)
+  const sound = audioCache[note].cloneNode();
+  sound.currentTime = 0;
+  sound.play().catch(error => console.log(error))
+}
+
+function buttonClicked (input) {
+  const b = document.getElementById(input).parentNode;
+  b.disabled = false;
+  const mouseDownEvent = new MouseEvent('mousedown', {
+    bubbles: true, // Событие будет всплывать
+    cancelable: true, // Событие можно отменить
+    button: 0 // 0 - левая кнопка мыши
+  });
+  b.dispatchEvent(mouseDownEvent);
+  b.classList.add('key_active');
+  playSound(b.id)
+}
+
+function playNotePromise(note, delay = 300) {
+  return new Promise(resolve => {
+    buttonClicked(note.toUpperCase());
+    setTimeout(() => {
+      resolve();
+    }, delay);
+  });
+}
+
 
 const keysArr = [];
 for (let note in notes) {
@@ -28,9 +58,11 @@ const main = createElement('main', 'container main', '', fragment);
 const keyboard = createElement('div', 'keyboard', '', main);
 
 for (let key in notes) {
+  audioCache[key] = new Audio(notes[key].sound)
   const keyWrapper = createElement('div', 'key-wrapper', '', keyboard);
   const button = createElement('button', 'key', '', keyWrapper);
   const input = createElement('input', 'input', '', button);
+  button.id = key;
   input.value = notes[key].key;
   input.id = notes[key].key;
   input.minlenght = 1;
@@ -68,19 +100,20 @@ for (let key in notes) {
       input.disabled = true;
     }
   });
-  let audio = new Audio(notes[key].sound);
-  ;
-  // button.addEventListener('mousedown', (e) => {
-  //   e.repeat = false;
-  //   audio.play();
-  // });
-  button.addEventListener('click', (e) => {
+  // let audio = new Audio(notes[key].sound);
+  button.addEventListener('mousedown', (e) => {
     e.repeat = false;
-    audio.play();
+    console.log('click',key,  e)
+    playSound(key)
   });
-  // button.addEventListener('mouseup', () => {
-  //   audio.pause();
-  // });
+
+  button.addEventListener('mouseup', () => {
+    if (audioCache[key]) {
+      audioCache[key].pause();
+      audioCache[key].currentTime = 0; // сбросить на начало
+      delete audioCache[key];
+    }
+  });
 
   const editButton = createElement('button', 'btn btn-light', 'edit', keyWrapper);
   editButton.addEventListener('click', (event) => {
@@ -95,15 +128,19 @@ const submitButton = createElement('button', 'btn btn-outline-success control__s
 playInput.id = 'playInput';
 playInput.type = 'text';
 playInput.setAttribute('maxlength', '14');
+
+document.body.appendChild(fragment);
+const arr = document.querySelectorAll('.key');
+
+submitButton.disabled = true;
 let song = '';
+
 playInput.addEventListener('input', (e) => {
-  const arr = document.querySelectorAll('.key');
-  arr.forEach(item => {
-    return item.disabled = true;
-  });
   playInput.focus();
-  const value = e.data.toUpperCase();
-  console.log(value, !/^[A-Z]$/.test(value), !keysArr.includes(value));
+  let value = '';
+  if (e.data) {
+    value = e.data.toUpperCase();
+  }
   if (!/^[A-Z]$/.test(value) || !keysArr.includes(value)) {
     console.log('не подходит', song);
     e.target.value = song;
@@ -112,23 +149,50 @@ playInput.addEventListener('input', (e) => {
   if (song.length < 14) {
     song += e.data;
   }
+  if (song.length > 0) {
+    submitButton.disabled = false;
+  }
 
 });
+playInput.addEventListener('keydown', (e) => {
+  if (e.code === 'Backspace' || e.code === 'Delete') {
+    if (song.length === 1) {
+      submitButton.disabled  = true;
+    }
+    if (e.code === 'Backspace') {
+      song = song.slice(0, song.length - 1);
+    }
+    if (e.code === 'Delete') {
 
-document.body.appendChild(fragment);
+    }
+  }
+})
+submitButton.addEventListener('click', async (e) => {
+  arr.forEach(item => {
+    return item.disabled = true;
+  });
+  const notes = song.split('');
+  for (let i = 0; i < notes.length; i++) {
+    await playNotePromise(notes[i]);
+  }
+  document.querySelectorAll('.key_active').forEach(el => el.classList.remove('key_active'));
+  arr.forEach(item => item.disabled = false);
+  submitButton.disabled = true;
+  console.log(document.getElementById('playInput'))
+  document.getElementById('playInput').value = '';
+})
 
 const keys = document.querySelectorAll('.key');
 document.addEventListener('keydown', (e) => {
   e.repeat = false;
-  if (keyLocked && !e.repeat) {
+  if (keyLocked && !e.repeat || e.target.id === "playInput") {
     return;
   }
   const code = e.code.slice(3);
   if (keysArr.includes(code)) {
     keyLocked = true;
-    const b = document.getElementById(code).parentNode;
-    b.click();
-    b.classList.add('key_active');
+    buttonClicked(code);
+
   }
 });
 
@@ -139,6 +203,7 @@ document.addEventListener('keyup', (e) => {
     if (child.id === e.code.slice(3)) {
       keyLocked = false;
       activeKey.classList.remove('key_active');
+
     }
   }
 });
