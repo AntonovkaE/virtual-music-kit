@@ -11,6 +11,8 @@ let keyLocked = false;
 const audioCache = {};
 const activeSounds = {};
 function  playSound(note) {
+  if (keyLocked) return;
+  keyLocked = true;
   if (activeSounds[note]) return;
   const sound = audioCache[note].cloneNode();
   sound.currentTime = 0;
@@ -29,10 +31,11 @@ function stopSound(note, isAutoplay = false) {
   }
   if (sound) {
     setTimeout(() => {
-      // sound.pause();
+      sound.pause();
       sound.currentTime = 0;
       delete activeSounds[note];
-    }, 300);
+      keyLocked = false;
+    }, 1000);
   }
 }
 
@@ -126,7 +129,7 @@ for (let key in notes) {
       input.disabled = true;
     }
   });
-  // let audio = new Audio(notes[key].sound);
+
   button.addEventListener('mousedown', (e) => {
     e.repeat = false;
     playSound(key)
@@ -202,7 +205,6 @@ submitButton.addEventListener('click', async (e) => {
   song = ''
 })
 
-const keys = document.querySelectorAll('.key');
 document.addEventListener('keydown', (e) => {
   e.repeat = false;
   if (keyLocked && !e.repeat || e.target.id === "playInput") {
@@ -210,7 +212,6 @@ document.addEventListener('keydown', (e) => {
   }
   const code = e.code.slice(3);
   if (keysArr.includes(code)) {
-    keyLocked = true;
     buttonClicked(code);
 
   }
@@ -231,5 +232,3 @@ document.addEventListener('keyup', (e) => {
   }
 });
 
-
-//Only one key can be processed at a time. If the user attempts to press multiple keys simultaneously, the application should process only the first key press detected to prevent multiple inputs from being registered at the same moment.
