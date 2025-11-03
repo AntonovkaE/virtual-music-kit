@@ -14,21 +14,26 @@ function  playSound(note) {
   if (activeSounds[note]) return;
   const sound = audioCache[note].cloneNode();
   sound.currentTime = 0;
-  sound.loop = true;
+  // sound.loop = true;
   activeSounds[note] = sound;
   sound.play().catch(error => console.log(error))
   console.log('play')
-
 }
-
-function stopSound(note) {
+function stopSound(note, isAutoplay = false) {
   const sound = activeSounds[note];
+  const button = document.getElementById(note)
+  if (button.classList.contains('key_active')) {
+    button.classList.remove('key_active')
+  }
+  if (isAutoplay) {
+    button.disabled = true;
+  }
   if (sound) {
     setTimeout(() => {
-      sound.pause();
+      // sound.pause();
       sound.currentTime = 0;
       delete activeSounds[note];
-    }, 1000);
+    }, 300);
   }
 }
 
@@ -45,10 +50,20 @@ function buttonClicked (input) {
   playSound(b.id)
 }
 
-function playNotePromise(note, delay = 300) {
+function getNoteByKey(key) {
+  for (let note in notes) {
+    if (notes[note].key === key.toUpperCase()) {
+      return note;
+    }
+  }
+}
+
+function playNotePromise(note, delay = 1000) {
   return new Promise(resolve => {
+    console.log(note)
     buttonClicked(note.toUpperCase());
     setTimeout(() => {
+      stopSound(getNoteByKey(note), true)
       resolve();
     }, delay);
   });
@@ -71,6 +86,7 @@ function createElement(tag, classes = '', content = '', parent = fragment) {
 const main = createElement('main', 'container main', '', fragment);
 
 const keyboard = createElement('div', 'keyboard', '', main);
+
 
 for (let key in notes) {
   audioCache[key] = new Audio(notes[key].sound)
@@ -190,6 +206,7 @@ submitButton.addEventListener('click', async (e) => {
   submitButton.disabled = true;
   console.log(document.getElementById('playInput'))
   document.getElementById('playInput').value = '';
+  song = ''
 })
 
 const keys = document.querySelectorAll('.key');
@@ -208,13 +225,15 @@ document.addEventListener('keydown', (e) => {
 
 document.addEventListener('keyup', (e) => {
   const activeKey = document.querySelector('.key_active');
-  const button = document.getElementById(e.code.slice(3)).parentNode;
-  if (activeKey) {
-    const child = activeKey.firstChild;
-    if (child.id === e.code.slice(3)) {
-      keyLocked = false;
-      activeKey.classList.remove('key_active');
-      stopSound(button.id)
+  if (keysArr.includes(e.code.slice(3))) {
+    const button = document.getElementById(e.code.slice(3)).parentNode;
+    if (activeKey) {
+      const child = activeKey.firstChild;
+      if (child.id === e.code.slice(3)) {
+        keyLocked = false;
+        activeKey.classList.remove('key_active');
+        stopSound(button.id)
+      }
     }
   }
 });
