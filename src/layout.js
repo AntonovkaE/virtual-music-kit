@@ -17,7 +17,6 @@ function  playSound(note) {
   // sound.loop = true;
   activeSounds[note] = sound;
   sound.play().catch(error => console.log(error))
-  console.log('play')
 }
 function stopSound(note, isAutoplay = false) {
   const sound = activeSounds[note];
@@ -60,7 +59,6 @@ function getNoteByKey(key) {
 
 function playNotePromise(note, delay = 1000) {
   return new Promise(resolve => {
-    console.log(note)
     buttonClicked(note.toUpperCase());
     setTimeout(() => {
       stopSound(getNoteByKey(note), true)
@@ -112,7 +110,6 @@ for (let key in notes) {
   });
   input.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
-      console.log('h');
       const value = input.value.toUpperCase();
       if (value && /^[A-Z]$/.test(value) && !keysArr.includes(value)) {
         input.disabled = true;
@@ -120,13 +117,11 @@ for (let key in notes) {
         input.id = value;
         notes[key].key = e.target.id;
         keysArr.push(value);
-        console.log(keysArr);
       }
     }
   });
   input.addEventListener('blur', () => {
     if (!input.disabled) {
-      console.log(input, input.value);
       input.value = input.id.toUpperCase();
       input.disabled = true;
     }
@@ -168,7 +163,6 @@ playInput.addEventListener('input', (e) => {
     value = e.data.toUpperCase();
   }
   if (!/^[A-Z]$/.test(value) || !keysArr.includes(value)) {
-    console.log('не подходит', song);
     e.target.value = song;
     return;
   }
@@ -204,7 +198,6 @@ submitButton.addEventListener('click', async (e) => {
   document.querySelectorAll('.key_active').forEach(el => el.classList.remove('key_active'));
   arr.forEach(item => item.disabled = false);
   submitButton.disabled = true;
-  console.log(document.getElementById('playInput'))
   document.getElementById('playInput').value = '';
   song = ''
 })
