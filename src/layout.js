@@ -16,7 +16,6 @@ function  playSound(note) {
   if (activeSounds[note]) return;
   const sound = audioCache[note].cloneNode();
   sound.currentTime = 0;
-  // sound.loop = true;
   activeSounds[note] = sound;
   sound.play().catch(error => console.log(error))
 }
@@ -30,12 +29,13 @@ function stopSound(note, isAutoplay = false) {
     button.disabled = true;
   }
   if (sound) {
+    keyLocked = false;
     setTimeout(() => {
       sound.pause();
       sound.currentTime = 0;
       delete activeSounds[note];
-      keyLocked = false;
-    }, 1000);
+
+    }, 700);
   }
 }
 
@@ -60,7 +60,7 @@ function getNoteByKey(key) {
   }
 }
 
-function playNotePromise(note, delay = 1000) {
+function playNotePromise(note, delay = 2000) {
   return new Promise(resolve => {
     buttonClicked(note.toUpperCase());
     setTimeout(() => {
