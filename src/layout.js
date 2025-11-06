@@ -88,7 +88,9 @@ const main = createElement('main', 'container main', '', fragment);
 
 const keyboard = createElement('div', 'keyboard', '', main);
 
-
+const control = createElement('div', 'input-group control', '', main);
+const playInput = createElement('input', 'control__input', '', control);
+let song = '';
 for (let key in notes) {
   audioCache[key] = new Audio(notes[key].sound)
   const keyWrapper = createElement('div', 'key-wrapper', '', keyboard);
@@ -143,11 +145,12 @@ for (let key in notes) {
   editButton.addEventListener('click', (event) => {
     input.focus();
     input.disabled = false;
+    playInput.value = ''
+    song = ''
   });
 }
 
-const control = createElement('div', 'input-group control', '', main);
-const playInput = createElement('input', 'control__input', '', control);
+
 const submitButton = createElement('button', 'btn btn-outline-success control__submit', 'submit', control);
 playInput.id = 'playInput';
 playInput.type = 'text';
@@ -157,7 +160,6 @@ document.body.appendChild(fragment);
 const arr = document.querySelectorAll('.key');
 
 submitButton.disabled = true;
-let song = '';
 
 playInput.addEventListener('input', (e) => {
   playInput.focus();
