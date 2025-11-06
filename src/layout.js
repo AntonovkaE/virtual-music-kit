@@ -7,6 +7,16 @@ const notes = {
   la: { key: 'H', sound: './assets/lja.mp3', label: 'La' },
   si: { key: 'J', sound: './assets/si.mp3', label: 'Si' },
 };
+
+const head = document.head;
+const link = document.createElement('link');
+link.rel = 'icon';
+link.type = 'image/x-icon';
+link.href = '../assets/favicon.ico';
+head.appendChild(link);
+
+
+
 let keyLocked = false;
 const audioCache = {};
 const activeSounds = {};
