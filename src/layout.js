@@ -79,7 +79,7 @@ const fragment = document.createDocumentFragment();
 function createElement(tag, classes = '', content = '', parent = fragment) {
   const el = document.createElement(tag);
   el.className = classes;
-  if (content) el.innerHTML = content;
+  if (content) el.textContent = content;
   parent.appendChild(el);
   return el;
 }
