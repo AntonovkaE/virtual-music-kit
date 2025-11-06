@@ -29,6 +29,11 @@
 		margin-bottom: 10px;
 }
 
+.key_disabled {
+		background: #888888;
+		transform: translateY(0);
+}
+
 .input {
 		width: 80%;
 		display: flex;

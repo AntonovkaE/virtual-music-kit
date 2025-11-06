@@ -12,12 +12,13 @@ const head = document.head;
 const link = document.createElement('link');
 link.rel = 'icon';
 link.type = 'image/x-icon';
-link.href = '../assets/favicon.ico';
+link.href = './assets/favicon.ico';
 head.appendChild(link);
 
 
 
 let keyLocked = false;
+let lockedForUser = false;
 const audioCache = {};
 const activeSounds = {};
 function  playSound(note) {
