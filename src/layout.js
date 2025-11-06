@@ -193,6 +193,8 @@ playInput.addEventListener('keydown', (e) => {
   }
 })
 submitButton.addEventListener('click', async (e) => {
+  playInput.disabled = true;
+  submitButton.disabled = true;
   arr.forEach(item => {
     return item.disabled = true;
   });
@@ -202,7 +204,8 @@ submitButton.addEventListener('click', async (e) => {
   }
   document.querySelectorAll('.key_active').forEach(el => el.classList.remove('key_active'));
   arr.forEach(item => item.disabled = false);
-  submitButton.disabled = true;
+  // submitButton.disabled = true;
+  playInput.disabled = false;
   document.getElementById('playInput').value = '';
   song = ''
 })
